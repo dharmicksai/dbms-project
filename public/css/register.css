@@ -1,0 +1,73 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box}
+
+input[type=input], input[type=password]{
+    width: 30%;
+    padding: 12px 20px;
+    margin-left: 35%;
+    margin-right: 35%;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+label{
+    margin-right: 23%;
+}
+
+input[type=input]:focus, input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+}
+
+hr {
+    border: 1px solid #f1f1f1;
+    margin-bottom: 25px;
+}
+
+input[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    /*margin: 8px;*/
+    margin-left: 35%;
+    margin-right: 35%;
+    border: none;
+    cursor: pointer;
+    width: 30%;
+}
+
+input[type=submit]:hover {
+    opacity:1;
+}
+
+.container {
+    padding: 30px;
+}
+
+/* The alert message box */
+.alert {
+    padding: 1%;
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-bottom: 15px;
+    margin-left: 35%;
+    margin-right: 35%;
+}
+
+/* The close button */
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+    color: black;
+}

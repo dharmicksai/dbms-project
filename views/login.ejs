@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Portfolio Manager</title>
+        <link rel="stylesheet" href="/css/login.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body>
+        <center>
+            <h1>Login</h1>
+            <p>Enter your account details to track your investments</p>
+        </center>
+
+        <form action="/login" method="POST">
+            <div class="container">
+                    <% if (message!="") {%>
+                        <div class="alert">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                            <%= message %>
+                        </div>
+                    <%}%>
+                <p for="username" style="margin-left: 35%;"><b>Username</b></p>
+                <input type="input" placeholder="Enter Username" name="username", value="<%= username%>">
+
+                <p for="password" style="margin-left: 35%;"><b>Password</b></p>
+                <input type="password" placeholder="Enter Password" name="password">
+                <br><br>
+                <input type="submit" name="login" value="Login">
+                <p style="text-align: center;"><a href="/register">Not a member? Register</a></p>
+            </div>
+        </form>
+    </body>
+</html>

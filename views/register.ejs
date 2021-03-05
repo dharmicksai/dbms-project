@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="/css/register.css">
+    <title>Portfolio Manager</title>
+
+    <body>
+        <form action="/register" method="POST" style="border:1px solid #ccc">
+            <div class="container">
+                <center>
+                    <h1>Register</h1>
+                    <p>Please fill in this form to create an account.</p>
+                </center>
+                <hr>
+                <center>
+                    <% if (message!="") {%>
+                        <div class="alert">
+                            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                            <%= message %>
+                        </div>
+                    <%}%>
+
+                    <br>
+                    <label for="username"><b>Username</b></label>
+                    <br>
+                    <input type="input" placeholder="Enter your username" name="username", value="<%= username %>">
+                    <br><br>
+                    <label for="password"><b>Password</b></label>
+                    <br>
+                    <input type="password" placeholder="Enter Password" name="password">
+                    <br><br>
+                    <label for="confirm_password" style="margin-right: 18%;"><b>Confirm Password</b></label>
+                    <br>
+                    <input type="password" placeholder="Repeat the password" name="confirm_password">
+                </center>
+                <br><br>
+                <input type="submit" name="Register" value="Register">
+            </div>
+        </form>
+    </body>
+</html>
