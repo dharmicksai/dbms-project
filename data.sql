@@ -1,0 +1,25 @@
+create database Platform;
+use Platform;
+
+create table User (
+    userID int primary key auto_increment,
+    username varchar(25) unique not null,
+    password varchar(25) not null
+);
+
+create table Stocks (
+    stockID int primary key auto_increment,
+    stockname varchar(25) unique not null,
+    unitprice float
+);
+
+create table Transactions (
+    transactionID int primary key auto_increment,
+    username varchar(25),
+    stockname varchar(25),
+    units int not null,
+    price_old float,
+    foreign key (username) references User (username),
+    foreign key (stockname) references Stocks (stockname)
+);
+

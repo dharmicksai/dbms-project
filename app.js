@@ -4,13 +4,14 @@ var dbms = mysql.createConnection({
     host: "localhost",
     user: "admin",
     password: "admin",
-    database: "portfolio"
+    database: "Platform"
 });
 
 dbms.connect((err) => {
-    dbms.query("select * from user", (result) => {
+    //trial query to check connection
+    dbms.query("select * from User", (result) => {
         if(err) throw err;
-        console.log(">> Successfully connected to Portfolio Database");
+        console.log(">> Successfully connected to Platform Database");
     });
 });
 
@@ -21,7 +22,6 @@ var bp = require('body-parser');
 var getJSON = require('get-json');
 var path = require('path');
 var app = express();
-var activeUsers = {};
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
@@ -37,7 +37,7 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    var query = "select userID, password from user where username = \"" + req.body.username + "\";";
+    var query = "select userID, password from User where username = \"" + req.body.username + "\";";
     dbms.query(query, (err, result, fields) => {
         if(err) throw err;
 
@@ -48,8 +48,8 @@ app.post('/login', (req, res) => {
             res.render('login', {message: "Wrong Password", username: req.body.username});
         }
         else {
-            activeUsers[req.socket.remoteAddress] = result[0].username;
-            res.redirect('/profile');
+            var travel = '/profile/' + result[0].userID;
+            res.redirect(travel);
         }
     });
 })
@@ -59,7 +59,7 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-    var query = "select username from user where username = \"" + req.body.username + "\";";
+    var query = "select username from User where username = \"" + req.body.username + "\";";
     dbms.query(query, (err, result, fields) => {
         if(err) throw err;
 
@@ -69,38 +69,75 @@ app.post('/register', (req, res) => {
         else if(req.body.username == "") {
             res.render('register', {message: "Username Empty", username: req.body.username});
         }
+        else if(req.body.password == "") {
+            res.render('register', {message: "Password Empty", username: req.body.username});
+        }
         else if(req.body.password != req.body.confirm_password) {
             res.render('register', {message: "Passwords are different", username: req.body.username});
         }
         else {
-            var new_record = "INSERT INTO user(username, password)" + 
+            var new_record = "INSERT INTO User(username, password)" + 
                 " VALUES(\"" + req.body.username + "\", \"" + req.body.password + "\");";
 
             dbms.query(new_record, (err, result, fields) => {
                 if(err) throw err;
 
-                var findID = "SELECT * from user WHERE username=\"" + req.body.username + "\";";
+                var findID = "SELECT * from User WHERE username=\"" + req.body.username + "\";";
                 dbms.query(findID, (err, result, fields) => {
                     if(err) throw err;
 
-                    activeUsers[req.socket.remoteAddress] = result[0].userID;
-                    res.redirect('/profile');
+                    var travel = '/profile/' + result[0].userID;
+                    res.redirect(travel);
                 });
             });
         }
     });
 });
 
-app.get('/profile', (req, res) => {
-    res.render('profile')
+app.get('/profile/:id', (req, res) => {
+    //console.log(req.params.id);
+    var key = parseInt(req.params.id);
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
+
+    dbms.query(findID, (err, result, fields) => {
+        if(err) throw err;
+
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        res.render('profile', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+    });
+
 });
 
-app.get('/buy', (req, res) => {
-    res.render('buy')
+app.get('/buy/:id', (req, res) => {
+    //console.log(req.params.id);
+    var key = parseInt(req.params.id);
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
+
+    dbms.query(findID, (err, result, fields) => {
+        if(err) throw err;
+
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        res.render('buy', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+    });
 });
 
-app.get('/sell', (req, res) => {
-    res.render('sell')
+app.get('/sell/:id', (req, res) => {
+    //console.log(req.params.id);
+    var key = parseInt(req.params.id);
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
+
+    dbms.query(findID, (err, result, fields) => {
+        if(err) throw err;
+
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        res.render('sell', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+    });
 });
 
 app.listen(4007, () => {

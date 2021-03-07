@@ -1,10 +1,27 @@
-<%- include('authenticated') -%>
 <html>
-    <title>Portfolio Manager</title>
+   <title>Stock trading</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<head>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">Portfolio Manager</a>
+    </div>
+    <ul class="nav navbar-nav">
+        <li id="home"><a href="<%= link1 %>">Dashboard</a></li>
+        <li id="login" ><a href="<%= link2 %>">Buy</a></li>
+        <li id="register" ><a href="<%= link3 %>">Sell</a></li>
+    </ul>
+  </div>
+</nav>
+</head>
 
-    <body>
-        <center>
-            <h1>Buy Stocks !!!</h1>
-        </center>
-    </body>
+<body>
+    <center>
+        <h1> Buy Stocks, <%= username %> !!!</h1>
+    </center>
+</body>
+
 </html>
