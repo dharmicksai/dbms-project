@@ -9,3 +9,6 @@ Dependances: ```npm install <package-name>```
 1) express
 2) mysql2
 3) ejs
+
+Database defined in data.sql :
+command : ```source data.sql```
