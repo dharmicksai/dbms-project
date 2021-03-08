@@ -2,8 +2,8 @@ var mysql = require('mysql2');
 
 var dbms = mysql.createConnection({
     host: "localhost",
-    user: "root",
-    password: "root@I",
+    user: "admin",
+    password: "admin",
     database: "Platform"
 });
 
@@ -107,7 +107,7 @@ app.get('/profile/:id', (req, res) => {
     
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
-        console.log(result[0].stockname);
+        // console.log(result[0].stockname);
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
