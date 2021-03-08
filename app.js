@@ -97,6 +97,7 @@ app.post('/register', (req, res) => {
 app.get('/profile/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
+    //  VERY VERY IMPORTANT QUERY
     var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth,stockname from UserStocks natural join Stocks  group by stockname ;";
     var username ;
     var find_user = "SELECT username from User WHERE userID = " + key + ";"
@@ -158,7 +159,7 @@ app.get('/sell/:id', (req, res) => {
 app.get('/quote/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
-    var findID = "SELECT * from User WHERE userID = " + key + ";";
+    var findID = "SELECT * from Stocks;";
 
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
@@ -169,7 +170,7 @@ app.get('/quote/:id', (req, res) => {
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
         res.render('quote', {inc: "",unitprice: "", link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5});
+            link3: link3, link4: link4, link5: link5, shares: result});
     });
 });
 
@@ -185,8 +186,15 @@ app.post('/quote/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('quote', {link1: link1, link2: link2, link3: link3, 
-            link4: link4, link5: link5, price: result[0].unitprice, inc: req.body.stockname});
+
+        var findID = "SELECT * from Stocks;";
+
+        dbms.query(findID, (err, answer, fields) => {
+            if(err) throw err;
+
+            res.render('quote', {link1: link1, link2: link2, link3: link3, link4: link4,
+                link5: link5, price: result[0].unitprice, inc: req.body.stockname, shares: answer});
+        });
     });
 })
 

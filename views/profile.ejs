@@ -1,21 +1,11 @@
 <html>
   <title>Stock trading</title>
+  <link rel="stylesheet" href="/css/table.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <head>
-  <style>
-    table, th, td {
-  border: 3px solid black;
-  text-align: center;
-  padding: 10px;
-  
-}
-  table {
-    width: 50%;
-  }
 
-  </style>
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -38,8 +28,8 @@
         <h1>Welcome to your Dashboard <%= username %> !!!</h1>
         <hr>
             <br>
-            <h3>Your Stocks:</h3>
-            <table>
+            <h1>Your Stocks:</h1>
+            <table class="container">
               <tr>
                 <th>Stock Name</th>
                 <th>Number of Stocks</th>

@@ -29,6 +29,11 @@
       <%}%>
     <form action="<%= link4 %>" method="post">
       <div class="form-group">
+        <label>Search for Stock Name: </label>
+            <select name = "chosenStockName">
+                <% for(var i = 0; i < shares.length; i++) { %>
+                    <option value="<%= shares[i].stockID %>"> <%= shares[i].stockname %> </option>
+                <% } %>
           <input autocomplete="off" autofocus class="form-control" name="stockname" placeholder="Stock-Name" type="text"/>
       </div>
       <button class="btn btn-primary" type="submit">Quote</button>
