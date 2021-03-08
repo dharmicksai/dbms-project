@@ -97,17 +97,23 @@ app.post('/register', (req, res) => {
 app.get('/profile/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
-    var findID = "SELECT * from User WHERE userID = " + key + ";";
-
+    var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth,stockname from UserStocks natural join Stocks  group by stockname ;";
+    var username ;
+    var find_user = "SELECT username from User WHERE userID = " + key + ";"
+    dbms.query(find_user , (err,result,feilds)=>{
+        if(err) throw err;
+        username = result[0].username;
+    });
+    
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
-
+        // console.log(result[0].stockname);
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('profile', {username: result[0].username, link1: link1, link2: link2, 
+        res.render('profile', {username: username,shares:result, link1: link1, link2: link2, 
             link3: link3, link4: link4, link5: link5});
     });
 

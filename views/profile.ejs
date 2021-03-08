@@ -4,6 +4,18 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <head>
+  <style>
+    table, th, td {
+  border: 3px solid black;
+  text-align: center;
+  padding: 10px;
+  
+}
+  table {
+    width: 50%;
+  }
+
+  </style>
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -24,6 +36,23 @@
 <body>
     <center>
         <h1>Welcome to your Dashboard <%= username %> !!!</h1>
+        <hr>
+            <br>
+            <h3>Your Stocks:</h3>
+            <table>
+              <tr>
+                <th>Stock Name</th>
+                <th>Number of Stocks</th>
+                <th>Stocks Worth</th>
+              </tr>
+            <% for (var i = 0; i<=shares.length -1 ; i++) { %>
+              <tr>
+                <td><%= shares[i].stockname %></td>
+                <td><%= shares[i].num_stocks %></td>
+                <td><%="$ "+ shares[i].stocksworth %></td>
+              </tr>
+            <% } %>
+            </table>
     </center>
 </body>
 

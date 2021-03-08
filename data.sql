@@ -23,3 +23,6 @@ create table Transactions (
     foreign key (stockname) references Stocks (stockname)
 );
 
+
+
+
