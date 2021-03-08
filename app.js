@@ -140,7 +140,7 @@ app.get('/buy/:id', (req, res) => {
 app.get('/sell/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
-    var findID = "SELECT * from Stocks natural join User WHERE userID = " + key + ";";
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
 
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
