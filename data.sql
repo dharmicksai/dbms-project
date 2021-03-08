@@ -23,3 +23,12 @@ create table Transactions (
     foreign key (stockname) references Stocks (stockname)
 );
 
+create table Market(
+    stockname varchar(25) ,
+    userID int,
+    numShares int not null , 
+    constraint market_prim primary key (stockname,userID), 
+    foreign key (stockname) references Stocks(stockname),
+    foreign key (userID)  references User(userID));
+
+
