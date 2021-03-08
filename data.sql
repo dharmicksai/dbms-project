@@ -15,11 +15,11 @@ create table Stocks (
 
 create table Transactions (
     transactionID int primary key auto_increment,
-    username varchar(25),
+    userID int,
     stockname varchar(25),
     units int not null,
-    price_old float,
-    foreign key (username) references User (username),
+    total_value float,
+    foreign key (userID) references User (userID),
     foreign key (stockname) references Stocks (stockname)
 );
 

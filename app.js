@@ -105,7 +105,10 @@ app.get('/profile/:id', (req, res) => {
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
-        res.render('profile', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+        res.render('profile', {username: result[0].username, link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5});
     });
 
 });
@@ -121,7 +124,10 @@ app.get('/buy/:id', (req, res) => {
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
-        res.render('buy', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+        res.render('buy', {username: result[0].username, link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5});
     });
 });
 
@@ -136,9 +142,52 @@ app.get('/sell/:id', (req, res) => {
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
-        res.render('sell', {username: result[0].username, link1: link1, link2 : link2, link3 : link3});
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+        res.render('sell', {username: result[0].username, link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5});
     });
 });
+
+app.get('/quote/:id', (req, res) => {
+    //console.log(req.params.id);
+    var key = parseInt(req.params.id);
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
+
+    dbms.query(findID, (err, result, fields) => {
+        if(err) throw err;
+
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+        res.render('quote', {username: result[0].username, link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5});
+    });
+});
+
+app.get('/history/:id', (req, res) => {
+    //console.log(req.params.id);
+    var key = parseInt(req.params.id);
+    var findID = "SELECT * from User WHERE userID = " + key + ";";
+
+    dbms.query(findID, (err, result, fields) => {
+        if(err) throw err;
+
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+        res.render('history', {username: result[0].username, link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5});
+    });
+});
+
+app.get('/logout', (req, res) => {
+    res.redirect('/')
+})
 
 app.listen(4007, () => {
     console.log('server started on port 4007')
