@@ -1,0 +1,10 @@
+input[type=text] {
+    width: 30%;
+    padding: 12px 20px;
+    /*margin: 8px;*/
+    margin-left: 35%;
+    margin-right: 35%;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
