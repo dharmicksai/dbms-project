@@ -24,10 +24,12 @@
 
 <body>
     <center>
-        <h1>Quote Price of the Company, <%= username %> !!!</h1>
-    <form action="/quote" method="post">
+      <% if (inc!="") {%>
+        <h1>Price of <%= inc %> share is <%= price %></h1>
+      <%}%>
+    <form action="<%= link4 %>" method="post">
       <div class="form-group">
-          <input autocomplete="off" autofocus class="form-control" name="symbol" placeholder="Symbol" type="text"/>
+          <input autocomplete="off" autofocus class="form-control" name="stockname" placeholder="Stock-Name" type="text"/>
       </div>
       <button class="btn btn-primary" type="submit">Quote</button>
     </form>
