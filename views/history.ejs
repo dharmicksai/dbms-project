@@ -1,5 +1,6 @@
 <html>
    <title>Stock trading</title>
+  <link rel="stylesheet" href="/css/table.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -23,8 +24,32 @@
 
 <body>
     <center>
-        <h1> <%= username %>, welcome to your history !!!</h1>
+        <h1> Hello <%= username %>, See your previous transactions !!!</h1>
     </center>
+    <% var num = 1 %>
+    <div id = "userhistory">
+      <table class = "container">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Shares</th>
+            <th scope="col">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% data.forEach(function(item) { %>
+          <tr>
+            <td><%= num %></td>
+            <td><%= item.stockname %></td>
+            <td><%= item.units %></td>
+            <td><%= item.total_value %></td>
+            <% num += 1 %>
+          </tr>
+        <% }); %>
+        </tbody>
+      </table>
+    </div>
 </body>
 
 </html>

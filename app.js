@@ -175,13 +175,21 @@ app.get('/history/:id', (req, res) => {
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
 
+        var username = result[0].username;
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('history', {username: result[0].username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5});
+
+        var userhistory = "SELECT * from Transactions where userID = " + key + ";";
+
+        dbms.query(userhistory, (err, result, fields) => {
+            if(err) throw err;
+            console.log(result);
+            res.render('history', {data: result, username: username, link1: link1, link2: link2, 
+                link3: link3, link4: link4, link5: link5});
+        });
     });
 });
 
