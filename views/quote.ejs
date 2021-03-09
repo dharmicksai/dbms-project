@@ -32,7 +32,7 @@
         <label>Search for Stock Name: </label>
             <select name = "chosenStockName">
                 <% for(var i = 0; i < shares.length; i++) { %>
-                    <option value="<%= shares[i].stockID %>"> <%= shares[i].stockname %> </option>
+                    <option value="<%= shares[i].stockID %>"> <%= shares[i].stockName %> </option>
                 <% } %>
           <input autocomplete="off" autofocus class="form-control" name="stockname" placeholder="Stock-Name" type="text"/>
       </div>
