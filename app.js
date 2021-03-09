@@ -4,7 +4,8 @@ var dbms = mysql.createConnection({
     host: "localhost",
     user: "admin",
     password: "admin", // Change password for you!!!
-    database: "Platform"
+    database: "Platform",
+    dateStrings: 'date'
 });
 
 dbms.connect((err) => {
@@ -195,8 +196,8 @@ app.post('/buy/:id', (req, res) =>{
         totalPrice = sharesBought*result[0].unitPrice;
         stockName = result[0].stockName;
         var insertQuery = 
-            `INSERT INTO Transactions(userID,stockName,units,totalValue) VALUES
-                (${userID}, '${stockName}',${sharesBought}, ${totalPrice});`;
+            `INSERT INTO Transactions(userID,stockName,units,totalValue,transacted) VALUES
+                (${userID}, '${stockName}', ${sharesBought}, ${totalPrice}, NOW());`;
         
         dbms.query(insertQuery, (err2, result2, fields2)=>{ // inserting tuple into transactions
             if(err2) throw err2;
@@ -268,9 +269,11 @@ app.post('/sell/:id', (req, res) =>{
     var link5 = '/history/' + key;
     var link6 = '/logout/' + key;
 
+    var allStocksQuery = `SELECT * FROM Stocks;`;
     var stockQuery = 
         `SELECT * FROM Stocks
             WHERE stockID = ${chosenStockID};`;
+    
     
 
     dbms.query(stockQuery, (err, result, fields) =>{
@@ -293,20 +296,25 @@ app.post('/sell/:id', (req, res) =>{
             
             if(isNaN(sumOfShares)  || sumOfShares < sharesSold){ // 0 stocks or less than required
                 statusMessage = `You do not have so many stocks to sell. Try again`;
-                res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                    link3: link3, link4: link4, link5: link5, link6: link6, stocks: result, statusMessage: statusMessage});
+                
+                dbms.query(allStocksQuery, (err3, result3, fields3) => { // showing drop down menu
+                    if(err3) throw err3;
+                    
+                    res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
+                        link3: link3, link4: link4, link5: link5, link6: link6, stocks: result3, statusMessage: statusMessage});
+                });
                 return;
             }
 
             var insertQuery = 
-                `INSERT INTO Transactions(userID,stockName,units,totalValue) VALUES
-                    (${userID}, '${stockName}', -${sharesSold}, -${totalPrice});`; // 2 '-' to indicate minus
+                `INSERT INTO Transactions(userID,stockName,units,totalValue,transacted) VALUES
+                    (${userID}, '${stockName}', -${sharesSold}, -${totalPrice}, NOW());`; // 2 '-' to indicate minus
             
-            dbms.query(insertQuery, (err3, result3, fields3)=>{ // inserthing tuple into transactions
+            dbms.query(insertQuery, (err3, result3, fields3)=>{ // inserting tuple into transactions
                 if(err3) throw err3;
             });
 
-            var allStocksQuery = `SELECT * FROM Stocks;`;
+           
             dbms.query(allStocksQuery, (err3, result3, fields3) => { // showing drop down menu
                 if(err3) throw err3;
                 
@@ -389,12 +397,13 @@ app.get('/history/:id', (req, res) => {
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
         var link6 = '/logout/' + key;
+        var userHistory = "SELECT * from Transactions where userID = " + key + " ORDER BY transactionID DESC LIMIT 5;";
 
-        var userhistory = "SELECT * from Transactions where userID = " + key + " ORDER BY transactionID DESC LIMIT 5;";
-
-        dbms.query(userhistory, (err, result, fields) => {
+        dbms.query(userHistory, (err, result, fields) => {
             if(err) throw err;
-            //console.log(result);
+            console.log(result[0].transacted);
+            console.log(result);
+            console.log(userHistory);
             res.render('history', {data: result, username: username, link1: link1, link2: link2, 
                 link3: link3, link4: link4, link5: link5, link6: link6});
         });

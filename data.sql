@@ -20,6 +20,8 @@ create table Transactions (
     stockName varchar(25),
     units int not null,
     totalValue float,
+    transacted datetime,
+
     foreign key (userID) references User (userID),
     foreign key (stockName) references Stocks (stockName)
 );
