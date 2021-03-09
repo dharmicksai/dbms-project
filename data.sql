@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS Platform;
 create database Platform;
 use Platform;
 
@@ -9,20 +10,16 @@ create table User (
 
 create table Stocks (
     stockID int primary key auto_increment,
-    stockname varchar(25) unique not null,
-    unitprice float
+    stockName varchar(25) unique not null,
+    unitPrice float
 );
 
 create table Transactions (
     transactionID int primary key auto_increment,
     userID int,
-    stockname varchar(25),
+    stockName varchar(25),
     units int not null,
-    total_value float,
+    totalValue float,
     foreign key (userID) references User (userID),
-    foreign key (stockname) references Stocks (stockname)
+    foreign key (stockName) references Stocks (stockName)
 );
-
-
-
-
