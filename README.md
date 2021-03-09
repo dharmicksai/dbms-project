@@ -10,5 +10,6 @@ Dependances: ```npm install <package-name>```
 2) mysql2
 3) ejs
 
-Database defined in data.sql :
+For all attributed in database definition use camel-case<br>
+Database is defined in data.sql<br>
 command : ```source data.sql```
