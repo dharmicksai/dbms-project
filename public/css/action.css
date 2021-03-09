@@ -1,4 +1,4 @@
-input[type=text] {
+input[type=text],input[type=number] {
     width: 30%;
     padding: 12px 20px;
     /*margin: 8px;*/

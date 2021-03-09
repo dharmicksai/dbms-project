@@ -173,12 +173,16 @@ app.post('/buy/:id', (req, res) =>{
             `INSERT INTO Transactions(userID,stockName,units,totalValue) VALUES
                 (${userID}, '${stockName}',${sharesBought}, ${totalPrice});`;
         
-        dbms.query(insertQuery, (err2, result2, fields2)=>{
+        dbms.query(insertQuery, (err2, result2, fields2)=>{ // inserting tuple into transactions
             if(err2) throw err2;
-            
+        });
+
+        var allStocksQuery = 'SELECT * FROM Stocks;';
+        dbms.query(allStocksQuery, (err2, result2, fields) =>{
+            if(err2) throw err2;
             statusMessage = `${sharesBought} Shares of ${stockName} worth ${totalPrice} USD Successfully Bought!`;
             res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, 
-                link3: link3, link4: link4, link5: link5, stocks: result, statusMessage: statusMessage});
+                link3: link3, link4: link4, link5: link5, stocks: result2, statusMessage: statusMessage});
         });
     });
  });
@@ -264,14 +268,19 @@ app.post('/sell/:id', (req, res) =>{
                 `INSERT INTO Transactions(userID,stockName,units,totalValue) VALUES
                     (${userID}, '${stockName}', -${sharesSold}, -${totalPrice});`; // 2 '-' to indicate minus
             
-            dbms.query(insertQuery, (err3, result3, fields3)=>{
+            dbms.query(insertQuery, (err3, result3, fields3)=>{ // inserthing tuple into transactions
+                if(err3) throw err3;
+            });
+
+            var allStocksQuery = `SELECT * FROM Stocks;`;
+            dbms.query(allStocksQuery, (err3, result3, fields3) => { // showing drop down menu
                 if(err3) throw err3;
                 
                 statusMessage = `${sharesSold} Shares of ${stockName} worth ${totalPrice} USD Successfully Sold!`;
                 res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                    link3: link3, link4: link4, link5: link5, stocks: result, statusMessage: statusMessage});
+                    link3: link3, link4: link4, link5: link5, stocks: result3, statusMessage: statusMessage});
             });
-        });
+    });
     });
  });
  
