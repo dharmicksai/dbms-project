@@ -3,7 +3,7 @@ var mysql = require('mysql2');
 var dbms = mysql.createConnection({
     host: "localhost",
     user: "admin",
-    password: "!23Admin", // Change password for you!!!
+    password: "admin", // Change password for you!!!
     database: "Platform"
 });
 
@@ -23,6 +23,7 @@ var getJSON = require('get-json');
 var path = require('path');
 const { writer } = require('repl');
 var app = express();
+var activeUsers = {};
 
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
@@ -49,6 +50,7 @@ app.post('/login', (req, res) => {
             res.render('login', {message: "Wrong Password", username: req.body.username});
         }
         else {
+            activeUsers[result[0].userID] = req.socket.remoteAddress;
             var travel = '/profile/' + result[0].userID;
             res.redirect(travel);
         }
@@ -86,7 +88,8 @@ app.post('/register', (req, res) => {
                 var findID = "SELECT * from User WHERE username=\"" + req.body.username + "\";";
                 dbms.query(findID, (err, result, fields) => {
                     if(err) throw err;
-
+                    
+                    activeUsers[result[0].userID] = req.socket.remoteAddress;
                     var travel = '/profile/' + result[0].userID;
                     res.redirect(travel);
                 });
@@ -98,6 +101,10 @@ app.post('/register', (req, res) => {
 app.get('/profile/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
     //  VERY VERY IMPORTANT QUERY
     var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth,stockname from UserStocks natural join Stocks  group by stockname ;";
     var username ;
@@ -115,8 +122,10 @@ app.get('/profile/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
+        var link6 = '/logout/' + key;
+
         res.render('profile', {username: username,shares:result, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5});
+            link3: link3, link4: link4, link5: link5, link6: link6});
     });
 
 });
@@ -124,12 +133,18 @@ app.get('/profile/:id', (req, res) => {
 app.get('/buy/:id', (req, res) => {
     //console.log(req.params.id);
     var key = req.params.id;
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
     var findID = "SELECT * from User WHERE userID = " + key + ";";
     var link1 = '/profile/' + key;
     var link2 = '/buy/' + key;
     var link3 = '/sell/' + key;
     var link4 = '/quote/' + key;
     var link5 = '/history/' + key;
+    var link6 = '/logout/' + key;
+
     var userID = key;
     var stocks, username, userID;
     dbms.query(findID, (err, result, fields) => { // showing profile page
@@ -141,10 +156,12 @@ app.get('/buy/:id', (req, res) => {
     dbms.query(stocksQuery, (err, result, fields) => { // showing drop down menu
         if(err) throw err;
         stocks = result;
-        res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, stocks: stocks, statusMessage: ""});
+        res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, link3: link3,
+             link4: link4, link5: link5, link6: link6, stocks: stocks, statusMessage: ""});
     });
 });
+
+
 app.post('/buy/:id', (req, res) =>{
     // req.body object has your form values
     var key = req.params.id;
@@ -166,6 +183,7 @@ app.post('/buy/:id', (req, res) =>{
     var link3 = '/sell/' + key;
     var link4 = '/quote/' + key;
     var link5 = '/history/' + key;
+    var link6 = '/logout/' + key;
 
     var stockQuery = 
         `SELECT * FROM Stocks
@@ -189,7 +207,7 @@ app.post('/buy/:id', (req, res) =>{
             if(err2) throw err2;
             statusMessage = `${sharesBought} Shares of ${stockName} worth ${totalPrice} USD Successfully Bought!`;
             res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, 
-                link3: link3, link4: link4, link5: link5, stocks: result2, statusMessage: statusMessage});
+                link3: link3, link4: link4, link5: link5, link6: link6, stocks: result2, statusMessage: statusMessage});
         });
     });
  });
@@ -198,12 +216,18 @@ app.post('/buy/:id', (req, res) =>{
  app.get('/sell/:id', (req, res) => {
     //console.log(req.params.id);
     var key = req.params.id;
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
     var findID = "SELECT * from User WHERE userID = " + key + ";";
     var link1 = '/profile/' + key;
     var link2 = '/buy/' + key;
     var link3 = '/sell/' + key;
     var link4 = '/quote/' + key;
     var link5 = '/history/' + key;
+    var link6 = '/logout/' + key;
+
     var userID = key;
     var stocks, username, userID;
     dbms.query(findID, (err, result, fields) => { // showing profile page
@@ -216,9 +240,11 @@ app.post('/buy/:id', (req, res) =>{
         if(err) throw err;
         stocks = result;
         res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, stocks: stocks, statusMessage: ""});
+            link3: link3, link4: link4, link5: link5, link6: link6, stocks: stocks, statusMessage: ""});
     });
 });
+
+
 app.post('/sell/:id', (req, res) =>{
     // req.body object has your form values
     var key = req.params.id;
@@ -240,6 +266,7 @@ app.post('/sell/:id', (req, res) =>{
     var link3 = '/sell/' + key;
     var link4 = '/quote/' + key;
     var link5 = '/history/' + key;
+    var link6 = '/logout/' + key;
 
     var stockQuery = 
         `SELECT * FROM Stocks
@@ -257,9 +284,9 @@ app.post('/sell/:id', (req, res) =>{
             WHERE userID = ${userID} AND stockName = '${stockName}';`;
 
         dbms.query(sumOfSharesQuery, (err2, result2, fields2) =>{
-            console.log(sumOfShares);
-            console.log(result2);
-            console.log(sumOfSharesQuery);
+            //console.log(sumOfShares);
+            //console.log(result2);
+            //console.log(sumOfSharesQuery);
             if(err2) throw err2;
             var sumOfShares = parseInt(result2[0].sum);
 
@@ -267,7 +294,7 @@ app.post('/sell/:id', (req, res) =>{
             if(isNaN(sumOfShares)  || sumOfShares < sharesSold){ // 0 stocks or less than required
                 statusMessage = `You do not have so many stocks to sell. Try again`;
                 res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                    link3: link3, link4: link4, link5: link5, stocks: result, statusMessage: statusMessage});
+                    link3: link3, link4: link4, link5: link5, link6: link6, stocks: result, statusMessage: statusMessage});
                 return;
             }
 
@@ -285,7 +312,7 @@ app.post('/sell/:id', (req, res) =>{
                 
                 statusMessage = `${sharesSold} Shares of ${stockName} worth ${totalPrice} USD Successfully Sold!`;
                 res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                    link3: link3, link4: link4, link5: link5, stocks: result3, statusMessage: statusMessage});
+                    link3: link3, link4: link4, link5: link5, link6: link6, stocks: result3, statusMessage: statusMessage});
             });
     });
     });
@@ -295,6 +322,10 @@ app.post('/sell/:id', (req, res) =>{
 app.get('/quote/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
     var findID = "SELECT * from Stocks;";
 
     dbms.query(findID, (err, result, fields) => {
@@ -305,14 +336,18 @@ app.get('/quote/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
+        var link6 = '/logout/' + key;
+
         res.render('quote', {inc: "",unitprice: "", link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, shares: result});
+            link3: link3, link4: link4, link5: link5, link6: link6, shares: result});
     });
 });
 
 app.post('/quote/:id', (req, res) => {
-    var query = "SELECT unitprice from Stocks where stockname = \"" + req.body.stockname + "\";";
+    var query = "SELECT unitprice from Stocks where stockname = \"" + req.body.chosenStockName + "\";";
     var key = parseInt(req.params.id);
+    var quantity = parseInt(req.body.stockUnits);
+    var inc = req.body.chosenStockName;
 
     dbms.query(query, (err, result, fields) => {
         if(err) throw err;
@@ -322,14 +357,15 @@ app.post('/quote/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
+        var link6 = '/logout/' + key;
 
         var findID = "SELECT * from Stocks;";
 
         dbms.query(findID, (err, answer, fields) => {
             if(err) throw err;
 
-            res.render('quote', {link1: link1, link2: link2, link3: link3, link4: link4,
-                link5: link5, price: result[0].unitprice, inc: req.body.stockname, shares: answer});
+            res.render('quote', {link1: link1, link2: link2, link3: link3, link4: link4,link5: link5,
+                link6: link6, quantity: quantity, price: result[0].unitprice, inc: inc, shares: answer});
         });
     });
 })
@@ -337,6 +373,10 @@ app.post('/quote/:id', (req, res) => {
 app.get('/history/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
     var findID = "SELECT * from User WHERE userID = " + key + ";";
 
     dbms.query(findID, (err, result, fields) => {
@@ -348,19 +388,22 @@ app.get('/history/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
+        var link6 = '/logout/' + key;
 
-        var userhistory = "SELECT * from Transactions where userID = " + key + ";";
+        var userhistory = "SELECT * from Transactions where userID = " + key + " ORDER BY transactionID DESC LIMIT 5;";
 
         dbms.query(userhistory, (err, result, fields) => {
             if(err) throw err;
-            console.log(result);
+            //console.log(result);
             res.render('history', {data: result, username: username, link1: link1, link2: link2, 
-                link3: link3, link4: link4, link5: link5});
+                link3: link3, link4: link4, link5: link5, link6: link6});
         });
     });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout/:id', (req, res) => {
+    var key = parseInt(req.params.id);
+    activeUsers[key] = undefined;
     res.redirect('/')
 })
 

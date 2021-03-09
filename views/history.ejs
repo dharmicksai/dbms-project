@@ -16,7 +16,7 @@
       <li id="sell" ><a href="<%= link3 %>">Sell</a></li>
       <li id="quote" ><a href="<%= link4 %>">Quote</a></li>
       <li id="history" ><a href="<%= link5 %>">History</a></li>
-      <li id="logout"><a href = "/logout">Logout</a></li>
+      <li id="logout"><a href ="<%= link6 %>">Logout</a></li>
     </ul>
   </div>
 </nav>
@@ -24,7 +24,7 @@
 
 <body>
     <center>
-        <h1> Hello <%= username %>, See your previous transactions !!!</h1>
+        <h1> See your previous 5 transactions !!!</h1>
     </center>
     <% var num = 1 %>
     <div id = "userhistory">
@@ -43,7 +43,7 @@
             <td><%= num %></td>
             <td><%= item.stockName %></td>
             <td><%= item.units %></td>
-            <td><%= item.totalValue %></td>
+            <td>$ <%= item.totalValue %></td>
             <% num += 1 %>
           </tr>
         <% }); %>

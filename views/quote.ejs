@@ -16,7 +16,7 @@
       <li id="sell" ><a href="<%= link3 %>">Sell</a></li>
       <li id="quote" ><a href="<%= link4 %>">Quote</a></li>
       <li id="history" ><a href="<%= link5 %>">History</a></li>
-      <li id="logout"><a href = "/logout">Logout</a></li>
+      <li id="logout"><a href ="<%= link6 %>">Logout</a></li>
     </ul>
   </div>
 </nav>
@@ -25,16 +25,18 @@
 <body>
     <center>
       <% if (inc!="") {%>
-        <h1>Price of <%= inc %> share is <%= price %></h1>
+        <h1>Price of <%= inc %> share is $<%= price %></h1>
+        <h2>Hence <%= quantity %> shares will cost $<%= quantity*price %></h2>
+        <br>
       <%}%>
     <form action="<%= link4 %>" method="post">
       <div class="form-group">
         <label>Search for Stock Name: </label>
             <select name = "chosenStockName">
                 <% for(var i = 0; i < shares.length; i++) { %>
-                    <option value="<%= shares[i].stockID %>"> <%= shares[i].stockName %> </option>
+                    <option value="<%= shares[i].stockName %>"> <%= shares[i].stockName %> </option>
                 <% } %>
-          <input autocomplete="off" autofocus class="form-control" name="stockname" placeholder="Stock-Name" type="text"/>
+          <input autocomplete="off" autofocus class="form-control" name="stockUnits" placeholder="Stock-Units" type="text"/>
       </div>
       <button class="btn btn-primary" type="submit">Quote</button>
     </form>
