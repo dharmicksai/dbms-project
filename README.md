@@ -9,6 +9,7 @@ Dependances: ```npm install <package-name>```
 1) express
 2) mysql2
 3) ejs
+4) body-parser
 
 For all attributes in database definition use camel-case<br>
 Database is defined in data.sql<br>
