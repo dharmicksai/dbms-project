@@ -35,6 +35,7 @@
             <th scope="col">Name</th>
             <th scope="col">Shares</th>
             <th scope="col">Price</th>
+            <th scope="col">Transacted</th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
             <td><%= item.stockName %></td>
             <td><%= item.units %></td>
             <td>$ <%= item.totalValue %></td>
+            <td> <%= item.transacted %> </td>
             <% num += 1 %>
           </tr>
         <% }); %>
