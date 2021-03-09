@@ -1,5 +1,6 @@
 <html>
   <title>Stock trading</title>
+  <link rel="stylesheet" href="/css/action.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -23,8 +24,21 @@
 
 <body>
     <center>
-        <h1>Quote Price of the Company, <%= username %> !!!</h1>
-    </center>
+      <% if (inc!="") {%>
+        <h1>Price of <%= inc %> share is <%= price %></h1>
+      <%}%>
+    <form action="<%= link4 %>" method="post">
+      <div class="form-group">
+        <label>Search for Stock Name: </label>
+            <select name = "chosenStockName">
+                <% for(var i = 0; i < shares.length; i++) { %>
+                    <option value="<%= shares[i].stockID %>"> <%= shares[i].stockname %> </option>
+                <% } %>
+          <input autocomplete="off" autofocus class="form-control" name="stockname" placeholder="Stock-Name" type="text"/>
+      </div>
+      <button class="btn btn-primary" type="submit">Quote</button>
+    </form>
+  </center>
 </body>
 
 </html>

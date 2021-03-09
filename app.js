@@ -98,17 +98,24 @@ app.post('/register', (req, res) => {
 app.get('/profile/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
-    var findID = "SELECT * from User WHERE userID = " + key + ";";
-
+    //  VERY VERY IMPORTANT QUERY
+    var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth,stockname from UserStocks natural join Stocks  group by stockname ;";
+    var username ;
+    var find_user = "SELECT username from User WHERE userID = " + key + ";"
+    dbms.query(find_user , (err,result,feilds)=>{
+        if(err) throw err;
+        username = result[0].username;
+    });
+    
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
-
+        // console.log(result[0].stockname);
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('profile', {username: result[0].username, link1: link1, link2: link2, 
+        res.render('profile', {username: username,shares:result, link1: link1, link2: link2, 
             link3: link3, link4: link4, link5: link5});
     });
 
@@ -288,7 +295,7 @@ app.post('/sell/:id', (req, res) =>{
 app.get('/quote/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
-    var findID = "SELECT * from User WHERE userID = " + key + ";";
+    var findID = "SELECT * from Stocks;";
 
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
@@ -298,10 +305,34 @@ app.get('/quote/:id', (req, res) => {
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('quote', {username: result[0].username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5});
+        res.render('quote', {inc: "",unitprice: "", link1: link1, link2: link2, 
+            link3: link3, link4: link4, link5: link5, shares: result});
     });
 });
+
+app.post('/quote/:id', (req, res) => {
+    var query = "SELECT unitprice from Stocks where stockname = \"" + req.body.stockname + "\";";
+    var key = parseInt(req.params.id);
+
+    dbms.query(query, (err, result, fields) => {
+        if(err) throw err;
+        //console.log(result);
+        var link1 = '/profile/' + key;
+        var link2 = '/buy/' + key;
+        var link3 = '/sell/' + key;
+        var link4 = '/quote/' + key;
+        var link5 = '/history/' + key;
+
+        var findID = "SELECT * from Stocks;";
+
+        dbms.query(findID, (err, answer, fields) => {
+            if(err) throw err;
+
+            res.render('quote', {link1: link1, link2: link2, link3: link3, link4: link4,
+                link5: link5, price: result[0].unitprice, inc: req.body.stockname, shares: answer});
+        });
+    });
+})
 
 app.get('/history/:id', (req, res) => {
     //console.log(req.params.id);
@@ -311,13 +342,21 @@ app.get('/history/:id', (req, res) => {
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
 
+        var username = result[0].username;
         var link1 = '/profile/' + key;
         var link2 = '/buy/' + key;
         var link3 = '/sell/' + key;
         var link4 = '/quote/' + key;
         var link5 = '/history/' + key;
-        res.render('history', {username: result[0].username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5});
+
+        var userhistory = "SELECT * from Transactions where userID = " + key + ";";
+
+        dbms.query(userhistory, (err, result, fields) => {
+            if(err) throw err;
+            console.log(result);
+            res.render('history', {data: result, username: username, link1: link1, link2: link2, 
+                link3: link3, link4: link4, link5: link5});
+        });
     });
 });
 

@@ -23,9 +23,3 @@ create table Transactions (
     foreign key (userID) references User (userID),
     foreign key (stockName) references Stocks (stockName)
 );
-
-INSERT INTO Stocks(stockName, unitprice) VALUES
-    ('Google', 20),
-    ('Uber', 10),
-    ('Amazon', 5),
-    ('Microsoft', 15);
