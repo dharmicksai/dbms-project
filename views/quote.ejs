@@ -11,12 +11,12 @@
       <a class="navbar-brand">Portfolio Manager</a>
     </div>
     <ul class="nav navbar-nav">
-      <li id="profile"><a href="<%= link1 %>">Dashboard</a></li>
-      <li id="buy" ><a href="<%= link2 %>">Buy</a></li>
-      <li id="sell" ><a href="<%= link3 %>">Sell</a></li>
-      <li id="quote" ><a href="<%= link4 %>">Quote</a></li>
-      <li id="history" ><a href="<%= link5 %>">History</a></li>
-      <li id="logout"><a href ="<%= link6 %>">Logout</a></li>
+      <li id="profile"><a href="/profile/<%= key %>">Dashboard</a></li>
+      <li id="buy" ><a href="/buy/<%= key %>">Buy</a></li>
+      <li id="sell" ><a href="/sell/<%= key %>">Sell</a></li>
+      <li id="quote" ><a href="/quote/<%= key %>">Quote</a></li>
+      <li id="history" ><a href="/history/<%= key %>">History</a></li>
+      <li id="logout"><a href ="/logout/<%= key %>">Logout</a></li>
     </ul>
   </div>
 </nav>
@@ -29,7 +29,7 @@
         <h2>Hence <%= quantity %> shares will cost $<%= quantity*price %></h2>
         <br>
       <%}%>
-    <form action="<%= link4 %>" method="post">
+    <form action="/quote/<%= key %>" method="post">
       <div class="form-group">
         <label>Search for Stock Name: </label>
             <select name = "chosenStockName">

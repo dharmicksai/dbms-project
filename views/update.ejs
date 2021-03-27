@@ -1,0 +1,41 @@
+<html>
+  <title>Stock trading</title>
+  <link rel="stylesheet" href="/css/action.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<head>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">Portfolio Manager</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li id="control"><a href="/control">Control</a></li>
+      <li id="update" ><a href="/update">Update</a></li>
+      <li id="add" ><a href="/add">Add</a></li>
+      <li id="logout"><a href ="/logout/1">Logout</a></li>
+    </ul>
+  </div>
+</nav>
+</head>
+
+<body>
+    <center>
+        <h1> Update the Price of Stocks !!!</h1>
+        <form action="/update" method="POST">
+          <div class = "form-group">
+            <label>Name: </label>
+            <select name = "chosenStockName">
+                <% for(var i = 0; i < data.length; i++) { %>
+                    <option value="<%= data[i].stockName %>"> <%= data[i].stockName %> </option>
+                <% } %>
+                <input autocomplete="off" autofocus class="form-control" name="sharePrice" placeholder="unit" type="number" min="1"/>
+                <button class="btn btn-default" type="submit">Update</button>
+          </div>
+      </form>
+    </center>
+</body>
+
+</html>

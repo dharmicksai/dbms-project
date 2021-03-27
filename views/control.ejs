@@ -12,12 +12,10 @@
       <a class="navbar-brand">Portfolio Manager</a>
     </div>
     <ul class="nav navbar-nav">
-      <li id="profile"><a href="/profile/<%= key %>">Dashboard</a></li>
-      <li id="buy" ><a href="/buy/<%= key %>">Buy</a></li>
-      <li id="sell" ><a href="/sell/<%= key %>">Sell</a></li>
-      <li id="quote" ><a href="/quote/<%= key %>">Quote</a></li>
-      <li id="history" ><a href="/history/<%= key %>">History</a></li>
-      <li id="logout"><a href ="/logout/<%= key %>">Logout</a></li>
+      <li id="control"><a href="/control">Control</a></li>
+      <li id="update" ><a href="/update">Update</a></li>
+      <li id="add" ><a href="/add">Add</a></li>
+      <li id="logout"><a href ="/logout/1">Logout</a></li>
     </ul>
   </div>
 </nav>
@@ -25,21 +23,19 @@
 
 <body>
     <center>
-        <h1>Welcome to your Dashboard <%= username %> !!!</h1>
+        <h1>Admin Panel!!!</h1>
         <hr>
-            <br>
-            <h1>Current Portfolio</h1>
             <table class="container">
               <tr>
+                <th>Stock ID</th>
                 <th>Stock Name</th>
-                <th>Number of Stocks</th>
-                <th>Stocks Worth</th>
+                <th>unitPrice</th>
               </tr>
-            <% for (var i = 0; i<=shares.length -1 ; i++) { %>
+            <% for (var i = 0; i < data.length ; i++) { %>
               <tr>
-                <td><%= shares[i].stockname %></td>
-                <td><%= shares[i].num_stocks %></td>
-                <td><%="$ "+ shares[i].stocksworth %></td>
+                <td><%= data[i].stockID %></td>
+                <td><%= data[i].stockName %></td>
+                <td><%="$ "+ data[i].unitPrice %></td>
               </tr>
             <% } %>
             </table>

@@ -12,12 +12,12 @@
       <a class="navbar-brand">Portfolio Manager</a>
     </div>
     <ul class="nav navbar-nav">
-      <li id="profile"><a href="<%= link1 %>">Dashboard</a></li>
-      <li id="buy" ><a href="<%= link2 %>">Buy</a></li>
-      <li id="sell" ><a href="<%= link3 %>">Sell</a></li>
-      <li id="quote" ><a href="<%= link4 %>">Quote</a></li>
-      <li id="history" ><a href="<%= link5 %>">History</a></li>
-      <li id="logout"><a href ="<%= link6 %>">Logout</a></li>
+      <li id="profile"><a href="/profile/<%= userID %>">Dashboard</a></li>
+      <li id="buy" ><a href="/buy/<%= userID %>">Buy</a></li>
+      <li id="sell" ><a href="/sell/<%= userID %>">Sell</a></li>
+      <li id="quote" ><a href="/quote/<%= userID %>">Quote</a></li>
+      <li id="history" ><a href="/history/<%= userID %>">History</a></li>
+      <li id="logout"><a href ="/logout/<%= userID %>">Logout</a></li>
     </ul>
   </div>
 </nav>

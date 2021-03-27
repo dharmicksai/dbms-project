@@ -19,6 +19,7 @@ dbms.connect((err) => {
 //Till here was just connecting to database portfolio
 
 var express = require('express');
+var logger = require('morgan');
 var bp = require('body-parser');
 var getJSON = require('get-json');
 var path = require('path');
@@ -30,6 +31,7 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+app.use(logger('dev'));
 
 app.get('/', (req, res) => {
     res.render('index')
@@ -52,7 +54,13 @@ app.post('/login', (req, res) => {
         }
         else {
             activeUsers[result[0].userID] = req.socket.remoteAddress;
-            var travel = '/profile/' + result[0].userID;
+            var travel;
+            if(result[0].userID == 1) {
+                travel = '/control';
+            }
+            else {
+                travel = '/profile/' + result[0].userID;
+            }
             res.redirect(travel);
         }
     });
@@ -118,15 +126,8 @@ app.get('/profile/:id', (req, res) => {
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
         // console.log(result[0].stockname);
-        var link1 = '/profile/' + key;
-        var link2 = '/buy/' + key;
-        var link3 = '/sell/' + key;
-        var link4 = '/quote/' + key;
-        var link5 = '/history/' + key;
-        var link6 = '/logout/' + key;
 
-        res.render('profile', {username: username,shares:result, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, link6: link6});
+        res.render('profile', {username: username,shares:result, key: key});
     });
 
 });
@@ -139,12 +140,6 @@ app.get('/buy/:id', (req, res) => {
     }
 
     var findID = "SELECT * from User WHERE userID = " + key + ";";
-    var link1 = '/profile/' + key;
-    var link2 = '/buy/' + key;
-    var link3 = '/sell/' + key;
-    var link4 = '/quote/' + key;
-    var link5 = '/history/' + key;
-    var link6 = '/logout/' + key;
 
     var userID = key;
     var stocks, username, userID;
@@ -157,8 +152,8 @@ app.get('/buy/:id', (req, res) => {
     dbms.query(stocksQuery, (err, result, fields) => { // showing drop down menu
         if(err) throw err;
         stocks = result;
-        res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, link3: link3,
-             link4: link4, link5: link5, link6: link6, stocks: stocks, statusMessage: ""});
+
+        res.render('buy', {userID: userID, username: username, stocks: stocks, statusMessage: ""});
     });
 });
 
@@ -179,12 +174,6 @@ app.post('/buy/:id', (req, res) =>{
     var stockName, totalPrice;
     var statusMessage = "";
     var username = req.body.username;
-    var link1 = '/profile/' + key;
-    var link2 = '/buy/' + key;
-    var link3 = '/sell/' + key;
-    var link4 = '/quote/' + key;
-    var link5 = '/history/' + key;
-    var link6 = '/logout/' + key;
 
     var stockQuery = 
         `SELECT * FROM Stocks
@@ -207,8 +196,7 @@ app.post('/buy/:id', (req, res) =>{
         dbms.query(allStocksQuery, (err2, result2, fields) =>{
             if(err2) throw err2;
             statusMessage = `${sharesBought} Shares of ${stockName} worth ${totalPrice} USD Successfully Bought!`;
-            res.render('buy', {userID: userID, username: username, link1: link1, link2: link2, 
-                link3: link3, link4: link4, link5: link5, link6: link6, stocks: result2, statusMessage: statusMessage});
+            res.render('buy', {userID: userID, username: username, stocks: result2, statusMessage: statusMessage});
         });
     });
  });
@@ -222,12 +210,6 @@ app.post('/buy/:id', (req, res) =>{
     }
 
     var findID = "SELECT * from User WHERE userID = " + key + ";";
-    var link1 = '/profile/' + key;
-    var link2 = '/buy/' + key;
-    var link3 = '/sell/' + key;
-    var link4 = '/quote/' + key;
-    var link5 = '/history/' + key;
-    var link6 = '/logout/' + key;
 
     var userID = key;
     var stocks, username, userID;
@@ -240,8 +222,7 @@ app.post('/buy/:id', (req, res) =>{
     dbms.query(stocksQuery, (err, result, fields) => { // showing drop down menu
         if(err) throw err;
         stocks = result;
-        res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, link6: link6, stocks: stocks, statusMessage: ""});
+        res.render('sell', {userID: userID, username: username, stocks: stocks, statusMessage: ""});
     });
 });
 
@@ -262,12 +243,6 @@ app.post('/sell/:id', (req, res) =>{
     var stockName, totalPrice;
     var statusMessage = "";
     var username = req.body.username;
-    var link1 = '/profile/' + key;
-    var link2 = '/buy/' + key;
-    var link3 = '/sell/' + key;
-    var link4 = '/quote/' + key;
-    var link5 = '/history/' + key;
-    var link6 = '/logout/' + key;
 
     var allStocksQuery = `SELECT * FROM Stocks;`;
     var stockQuery = 
@@ -300,8 +275,7 @@ app.post('/sell/:id', (req, res) =>{
                 dbms.query(allStocksQuery, (err3, result3, fields3) => { // showing drop down menu
                     if(err3) throw err3;
                     
-                    res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                        link3: link3, link4: link4, link5: link5, link6: link6, stocks: result3, statusMessage: statusMessage});
+                    res.render('sell', {userID: userID, username: username, stocks: result3, statusMessage: statusMessage});
                 });
                 return;
             }
@@ -319,10 +293,9 @@ app.post('/sell/:id', (req, res) =>{
                 if(err3) throw err3;
                 
                 statusMessage = `${sharesSold} Shares of ${stockName} worth ${totalPrice} USD Successfully Sold!`;
-                res.render('sell', {userID: userID, username: username, link1: link1, link2: link2, 
-                    link3: link3, link4: link4, link5: link5, link6: link6, stocks: result3, statusMessage: statusMessage});
+                res.render('sell', {userID: userID, username: username, stocks: result3, statusMessage: statusMessage});
             });
-    });
+        });
     });
  });
  
@@ -339,15 +312,7 @@ app.get('/quote/:id', (req, res) => {
     dbms.query(findID, (err, result, fields) => {
         if(err) throw err;
 
-        var link1 = '/profile/' + key;
-        var link2 = '/buy/' + key;
-        var link3 = '/sell/' + key;
-        var link4 = '/quote/' + key;
-        var link5 = '/history/' + key;
-        var link6 = '/logout/' + key;
-
-        res.render('quote', {inc: "",unitprice: "", link1: link1, link2: link2, 
-            link3: link3, link4: link4, link5: link5, link6: link6, shares: result});
+        res.render('quote', {key: key, inc: "",unitprice: "", shares: result});
     });
 });
 
@@ -360,20 +325,13 @@ app.post('/quote/:id', (req, res) => {
     dbms.query(query, (err, result, fields) => {
         if(err) throw err;
         //console.log(result);
-        var link1 = '/profile/' + key;
-        var link2 = '/buy/' + key;
-        var link3 = '/sell/' + key;
-        var link4 = '/quote/' + key;
-        var link5 = '/history/' + key;
-        var link6 = '/logout/' + key;
 
         var findID = "SELECT * from Stocks;";
 
         dbms.query(findID, (err, answer, fields) => {
             if(err) throw err;
 
-            res.render('quote', {link1: link1, link2: link2, link3: link3, link4: link4,link5: link5,
-                link6: link6, quantity: quantity, price: result[0].unitprice, inc: inc, shares: answer});
+            res.render('quote', {key: key, quantity: quantity, price: result[0].unitprice, inc: inc, shares: answer});
         });
     });
 })
@@ -391,21 +349,12 @@ app.get('/history/:id', (req, res) => {
         if(err) throw err;
 
         var username = result[0].username;
-        var link1 = '/profile/' + key;
-        var link2 = '/buy/' + key;
-        var link3 = '/sell/' + key;
-        var link4 = '/quote/' + key;
-        var link5 = '/history/' + key;
-        var link6 = '/logout/' + key;
         var userHistory = "SELECT * from Transactions where userID = " + key + " ORDER BY transactionID DESC LIMIT 5;";
 
         dbms.query(userHistory, (err, result, fields) => {
             if(err) throw err;
-            console.log(result[0].transacted);
-            console.log(result);
-            console.log(userHistory);
-            res.render('history', {data: result, username: username, link1: link1, link2: link2, 
-                link3: link3, link4: link4, link5: link5, link6: link6});
+           
+            res.render('history', {data: result, username: username, key: key});
         });
     });
 });
@@ -414,6 +363,60 @@ app.get('/logout/:id', (req, res) => {
     var key = parseInt(req.params.id);
     activeUsers[key] = undefined;
     res.redirect('/')
+})
+
+app.get('/control', (req, res) => {
+    find = "SELECT * from Stocks;";
+
+    dbms.query(find, (err, result, fields) => {
+        if(err) throw err;
+
+        res.render('control', {data: result});
+    });
+})
+
+app.get('/update', (req, res) => {
+    find = "SELECT * from Stocks;";
+
+    dbms.query(find, (err, result, fields) => {
+        if(err) throw err;
+
+        res.render('update', {data: result});
+    });
+})
+
+app.post('/update', (req, res) => {
+    var inc = req.body.chosenStockName;
+    var value = parseInt(req.body.sharePrice);
+    query = `UPDATE Stocks set unitPrice = ${value} where stockName = '${inc}';`;
+    console.log(query);
+    dbms.query(query, (err, result, fields) => {
+        if (err) throw err;
+
+        find = "SELECT * from Stocks;";
+
+        dbms.query(find, (err, answer, field) => {
+            if(err) throw err;
+
+            res.render('update', {data: answer});
+        });
+    });
+})
+
+app.get('/add', (req, res) => {
+    res.render('add');
+})
+
+app.post('/add', (req, res) => {
+    var inc = req.body.symbol;
+    var val = parseInt(req.body.shares);
+    query = `INSERT into Stocks (stockName, unitPrice) values ('${inc}', ${val});`;
+
+    dbms.query(query, (err, result, fields) => {
+        if (err) throw err;
+
+        res.render('add');
+    });
 })
 
 app.listen(4007, () => {
