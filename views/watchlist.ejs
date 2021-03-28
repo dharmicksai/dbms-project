@@ -1,6 +1,7 @@
 <html>
   <title>Stock trading</title>
   <link rel="stylesheet" href="/css/action.css">
+  <link rel="stylesheet" href="/css/table.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -25,22 +26,32 @@
 
 <body>
     <center>
-      <% if (inc!="") {%>
-        <h1>Price of <%= inc %> share is $<%= price %></h1>
-        <h2>Hence <%= quantity %> shares will cost $<%= quantity*price %></h2>
-        <br>
-      <%}%>
-    <form action="/quote/<%= key %>" method="post">
+    <form action="/watchlist/<%= key %>" method="post">
       <div class="form-group">
         <label>Search for Stock Name: </label>
             <select name = "chosenStockName">
                 <% for(var i = 0; i < shares.length; i++) { %>
                     <option value="<%= shares[i].stockName %>"> <%= shares[i].stockName %> </option>
                 <% } %>
-          <input autocomplete="off" autofocus class="form-control" name="stockUnits" placeholder="Stock-Units" type="text"/>
+          <input autocomplete="off" autofocus class="form-control" name="operation" placeholder="ADD/REMOVE" type="text"/>
       </div>
-      <button class="btn btn-primary" type="submit">Quote</button>
+      <button class="btn btn-primary" type="submit">Submit</button>
     </form>
+
+    <hr>
+        <h1>My Watchlist</h1>
+        <table class="container">
+            <tr>
+            <th>Stock Name</th>
+            <th>Stocks Worth</th>
+            </tr>
+        <% for (var i = 0; i< data.length ; i++) { %>
+            <tr>
+            <td><%= data[i].stockname %></td>
+            <td><%="$ "+ data[i].unitPrice %></td>
+            </tr>
+        <% } %>
+        </table>
   </center>
 </body>
 

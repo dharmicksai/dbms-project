@@ -25,3 +25,12 @@ create table Transactions (
     foreign key (userID) references User (userID),
     foreign key (stockName) references Stocks (stockName)
 );
+
+create table WatchList (
+    userID int,
+    stockName varchar(25),
+
+    foreign key (userID) references User (userID),
+    foreign key (stockName) references Stocks (stockName),
+    primary key(userID, stockName)
+);

@@ -33,13 +33,16 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(logger('dev'));
 
+
 app.get('/', (req, res) => {
     res.render('index')
 });
 
+
 app.get('/login', (req, res) => {
     res.render('login', {message: "", username: ""})
 });
+
 
 app.post('/login', (req, res) => {
     var query = "select userID, password from User where username = \"" + req.body.username + "\";";
@@ -66,9 +69,11 @@ app.post('/login', (req, res) => {
     });
 })
 
+
 app.get('/register', (req, res) => {
     res.render('register', {message: "", username: ""});
 });
+
 
 app.post('/register', (req, res) => {
     var query = "select username from User where username = \"" + req.body.username + "\";";
@@ -107,6 +112,7 @@ app.post('/register', (req, res) => {
     });
 });
 
+
 app.get('/profile/:id', (req, res) => {
     //console.log(req.params.id);
     var key = parseInt(req.params.id);
@@ -131,6 +137,7 @@ app.get('/profile/:id', (req, res) => {
     });
 
 });
+
 
 app.get('/buy/:id', (req, res) => {
     //console.log(req.params.id);
@@ -316,6 +323,7 @@ app.get('/quote/:id', (req, res) => {
     });
 });
 
+
 app.post('/quote/:id', (req, res) => {
     var query = "SELECT unitprice from Stocks where stockname = \"" + req.body.chosenStockName + "\";";
     var key = parseInt(req.params.id);
@@ -335,6 +343,7 @@ app.post('/quote/:id', (req, res) => {
         });
     });
 })
+
 
 app.get('/history/:id', (req, res) => {
     //console.log(req.params.id);
@@ -359,11 +368,67 @@ app.get('/history/:id', (req, res) => {
     });
 });
 
+
+app.get('/watchlist/:id', (req, res) => {
+    var key = parseInt(req.params.id);
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
+    var query = "SELECT stockname, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
+    var findID = "SELECT * from Stocks;";
+
+    dbms.query(query, (err, result, field) => {
+        if (err) throw err;
+
+        dbms.query(findID, (err, answer, field) => {
+            if (err) throw err;
+            
+            res.render('watchlist', {key: key, shares: answer, data: result});
+        });
+    });
+})
+
+
+app.post('/watchlist/:id', (req, res) => {
+    var op = req.body.operation;
+    var inc = req.body.chosenStockName;
+    var key = parseInt(req.params.id);
+
+    var change;
+    if(op == "ADD"){
+        change = `INSERT into WatchList (userID, stockName) values (${key}, '${inc}');`;
+    } else if(op == "REMOVE"){
+        change = `DELETE from WatchList where userID = ${key} and stockName = '${inc}';`;
+    }
+
+    if(op == "ADD" || op == "REMOVE"){
+        dbms.query(change, (err, answer, field) => {
+            if (err) throw err;
+        });
+    }
+
+    var query = "SELECT stockname, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
+    var findID = "SELECT * from Stocks;";
+
+    dbms.query(query, (err, result, field) => {
+        if (err) throw err;
+
+        dbms.query(findID, (err, answer, field) => {
+            if (err) throw err;
+            
+            res.render('watchlist', {key: key, shares: answer, data: result});
+        });
+    });
+})
+
+
 app.get('/logout/:id', (req, res) => {
     var key = parseInt(req.params.id);
     activeUsers[key] = undefined;
     res.redirect('/')
 })
+
 
 app.get('/control', (req, res) => {
     find = "SELECT * from Stocks;";
@@ -375,6 +440,7 @@ app.get('/control', (req, res) => {
     });
 })
 
+
 app.get('/update', (req, res) => {
     find = "SELECT * from Stocks;";
 
@@ -384,6 +450,7 @@ app.get('/update', (req, res) => {
         res.render('update', {data: result});
     });
 })
+
 
 app.post('/update', (req, res) => {
     var inc = req.body.chosenStockName;
@@ -403,9 +470,11 @@ app.post('/update', (req, res) => {
     });
 })
 
+
 app.get('/add', (req, res) => {
     res.render('add');
 })
+
 
 app.post('/add', (req, res) => {
     var inc = req.body.symbol;
@@ -418,6 +487,7 @@ app.post('/add', (req, res) => {
         res.render('add');
     });
 })
+
 
 app.listen(4007, () => {
     console.log('server started on port 4007')
