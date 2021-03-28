@@ -1,0 +1,46 @@
+<html>
+    <title>Stock trading</title>
+    <link rel="stylesheet" href="/css/discussion.css">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <link rel="stylesheet" href="/css/action.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   
+ <head>
+ <nav class="navbar navbar-inverse">
+   <div class="container-fluid">
+     <div class="navbar-header">
+       <a class="navbar-brand">Portfolio Manager</a>
+     </div>
+     <ul class="nav navbar-nav">
+       <li id="profile"><a href="/profile/<%= userID %>">Dashboard</a></li>
+       <li id="buy" ><a href="/buy/<%= userID %>">Buy</a></li>
+       <li id="sell" ><a href="/sell/<%= userID %>">Sell</a></li>
+       <li id="quote" ><a href="/quote/<%= userID %>">Quote</a></li>
+       <li id="history" ><a href="/history/<%= userID %>">History</a></li>
+       <li id="watchlist" ><a href="/watchlist/<%= userID %>">Watchlist</a></li>
+       <li id="discussion" ><a href="/discussion/<%= userID %>">Discussion</a></li>
+       <li id="logout"><a href ="/logout/<%= userID %>">Logout</a></li>
+     </ul>
+   </div>
+ </nav>
+ </head>
+ 
+ <body>
+  <% for(var i = 0; i < messages.length; i++) { %>
+    <div> 
+      <p> User <%= messages[i].username %> at <%= messages[i].posted %>: <%= messages[i].message %> </p>
+    </div>
+  <% } %>
+
+  <center>
+    <form action="/discussion/<%= userID %>" method="post">
+      <div class="form-group">
+          <input autocomplete="off" autofocus class="form-control" name="message" placeholder="Type something...." type="text"/>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+  </center>
+ </body>
+ 
+ </html>

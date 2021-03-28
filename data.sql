@@ -34,3 +34,11 @@ create table WatchList (
     foreign key (stockName) references Stocks (stockName),
     primary key(userID, stockName)
 );
+
+create table Discussion(
+	userID int, 
+	message varchar(200),
+	posted datetime,
+	
+	foreign key (userID) references User (userID)
+);
