@@ -34,3 +34,10 @@ create table WatchList (
     foreign key (stockName) references Stocks (stockName),
     primary key(userID, stockName)
 );
+
+create table StockPrice(  
+    stockName varchar(25) , 
+     time datetime , 
+     Price float , 
+     foreign key (stockName) references Stocks (stockName)
+);
