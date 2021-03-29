@@ -24,6 +24,7 @@ var bp = require('body-parser');
 var getJSON = require('get-json');
 var path = require('path');
 const { writer } = require('repl');
+const { query } = require('express');
 var app = express();
 var activeUsers = {};
 
@@ -334,13 +335,19 @@ app.post('/quote/:id', (req, res) => {
         if(err) throw err;
         //console.log(result);
 
-        var findID = "SELECT * from Stocks;";
+        var stockPrice = "select * from StockPrice where stockName = \"" + req.body.chosenStockName +"\" order by time DESC;";
 
-        dbms.query(findID, (err, answer, fields) => {
-            if(err) throw err;
+        dbms.query(stockPrice , (err , stockPrices , feilds)=>{
 
-            res.render('quote', {key: key, quantity: quantity, price: result[0].unitprice, inc: inc, shares: answer});
-        });
+            var findID = "SELECT * from Stocks;";
+            console.log(stockPrices);
+            dbms.query(findID, (err, answer, fields) => {
+                if(err) throw err;
+
+                res.render('quote', {key: key, quantity: quantity, price: result[0].unitprice, inc: inc, shares: answer , sharePrize:stockPrices});
+            });
+        })
+        
     });
 })
 
@@ -495,10 +502,19 @@ app.get('/update', (req, res) => {
 app.post('/update', (req, res) => {
     var inc = req.body.chosenStockName;
     var value = parseInt(req.body.sharePrice);
-    query = `UPDATE Stocks set unitPrice = ${value} where stockName = '${inc}';`;
-    console.log(query);
-    dbms.query(query, (err, result, fields) => {
+
+    
+
+    q2 = `UPDATE Stocks set unitPrice = ${value} where stockName = '${inc}';`;
+    console.log(q2);
+    dbms.query(q2, (err, result, fields) => {
         if (err) throw err;
+
+        q1 = `Insert into StockPrice (stockName, time, Price) values ('${inc}',NOW(), ${value})`;
+
+        dbms.query(q1, (err, result, fields) => {
+            if (err) throw err;
+        });
 
         find = "SELECT * from Stocks;";
 
@@ -519,11 +535,15 @@ app.get('/add', (req, res) => {
 app.post('/add', (req, res) => {
     var inc = req.body.symbol;
     var val = parseInt(req.body.shares);
-    query = `INSERT into Stocks (stockName, unitPrice) values ('${inc}', ${val});`;
+    q2 = `INSERT into Stocks (stockName, unitPrice) values ('${inc}', ${val});`;
 
-    dbms.query(query, (err, result, fields) => {
+    dbms.query(q2, (err, result, fields) => {
         if (err) throw err;
+        q1 = `Insert into StockPrice (stockName, time, Price) values ('${inc}',NOW(), ${val})`;
 
+        dbms.query(q1, (err, result, fields) => {
+            if (err) throw err;
+        });
         res.render('add');
     });
 })

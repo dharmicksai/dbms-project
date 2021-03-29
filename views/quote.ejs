@@ -1,6 +1,7 @@
 <html>
   <title>Stock trading</title>
   <link rel="stylesheet" href="/css/action.css">
+  <link rel="stylesheet" href="/css/table.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -42,6 +43,25 @@
       </div>
       <button class="btn btn-primary" type="submit">Quote</button>
     </form>
+    <% if (inc!="") {%>
+      <hr>
+            <br>
+            <h1>Stock History</h1>
+            <table class="container">
+              <tr>
+                <th>Stock Name</th>
+                <th>time</th>
+                <th>Stocks Price</th>
+              </tr>
+            <% for (var i = 0; i<=sharePrize.length -1 ; i++) { %>
+              <tr>
+                <td><%= sharePrize[i].stockName %></td>
+                <td><%= sharePrize[i].time %></td>
+                <td><%="$ "+ sharePrize[i].Price %></td>
+              </tr>
+            <% } %>
+            </table>
+    <%}%>
   </center>
 </body>
 
