@@ -29,7 +29,7 @@
  <body>
   <% for(var i = 0; i < messages.length; i++) { %>
     <div> 
-      <p> User <%= messages[i].username %> at <%= messages[i].posted %>: <%= messages[i].message %> </p>
+      <p><b>User <%= messages[i].username %> at <%= messages[i].posted %>:</b> <i><%= messages[i].message %></i></p>
     </div>
   <% } %>
 

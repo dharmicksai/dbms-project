@@ -34,12 +34,14 @@
             <table class="container">
               <tr>
                 <th>Stock Name</th>
+                <th>Sector</th>
                 <th>Number of Stocks</th>
                 <th>Stocks Worth</th>
               </tr>
             <% for (var i = 0; i<=shares.length -1 ; i++) { %>
               <tr>
                 <td><%= shares[i].stockname %></td>
+                <td><%= shares[i].sector %></td>
                 <td><%= shares[i].num_stocks %></td>
                 <td><%="$ "+ shares[i].stocksworth %></td>
               </tr>
