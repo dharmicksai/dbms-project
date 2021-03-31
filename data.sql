@@ -11,6 +11,7 @@ create table User (
 create table Stocks (
     stockID int primary key auto_increment,
     stockName varchar(25) unique not null,
+    sector varchar(25),
     unitPrice float
 );
 
@@ -35,9 +36,17 @@ create table WatchList (
     primary key(userID, stockName)
 );
 
+create table Discussion(
+	userID int, 
+    message varchar(200),
+	posted datetime,
+	
+	foreign key (userID) references User (userID)
+ );
+ 
 create table StockPrice(  
     stockName varchar(25) , 
-     time datetime , 
-     Price float , 
-     foreign key (stockName) references Stocks (stockName)
+    time datetime , 
+    Price float , 
+    foreign key (stockName) references Stocks (stockName)
 );

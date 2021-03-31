@@ -122,7 +122,7 @@ app.get('/profile/:id', (req, res) => {
     }
 
     //  VERY VERY IMPORTANT QUERY
-    var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth,stockname from UserStocks natural join Stocks  group by stockname ;";
+    var findID = "with UserStocks(userID,units,stockname) as ( SELECT userID, units,stockname from Transactions natural join User having userID = "+key+") select sum(units)as num_stocks , sum(units)*unitprice as stocksworth, stockname, sector from UserStocks natural join Stocks  group by stockname ;";
     var username ;
     var find_user = "SELECT username from User WHERE userID = " + key + ";"
     dbms.query(find_user , (err,result,feilds)=>{
@@ -382,7 +382,7 @@ app.get('/watchlist/:id', (req, res) => {
         return res.redirect('/login');
     }
 
-    var query = "SELECT stockname, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
+    var query = "SELECT stockname, sector, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
     var findID = "SELECT * from Stocks;";
 
     dbms.query(query, (err, result, field) => {
@@ -415,7 +415,7 @@ app.post('/watchlist/:id', (req, res) => {
         });
     }
 
-    var query = "SELECT stockname, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
+    var query = "SELECT stockname, sector, unitPrice from WatchList inner join Stocks using (stockName) where userID = " + key + ";";
     var findID = "SELECT * from Stocks;";
 
     dbms.query(query, (err, result, field) => {
@@ -427,6 +427,46 @@ app.post('/watchlist/:id', (req, res) => {
             res.render('watchlist', {key: key, shares: answer, data: result});
         });
     });
+})
+
+app.get('/discussion/:id', (req, res) => {
+    var key = parseInt(req.params.id);
+    if(activeUsers[key] == undefined) {
+        return res.redirect('/login');
+    }
+
+    var getMessages = `
+        SELECT * FROM Discussion, User
+            WHERE User.userID = Discussion.userID;
+    `;
+    dbms.query(getMessages, (err, result, field) =>{
+        if(err) throw err;
+
+        res.render('discussion', {userID: key, messages: result});
+    });
+})
+
+app.post('/discussion/:id', (req, res) =>{
+    var key = parseInt(req.params.id);
+    var message = req.body.message;
+
+    if(message === ""){
+        res.redirect('/discussion/' + key);
+        return;
+    }
+
+    console.log(message);
+    var addRow =
+    `
+        INSERT INTO Discussion(userID, message, posted) VALUES
+            (${key}, '${message}', NOW());
+    `;
+
+    dbms.query(addRow, (err, result, field) =>{
+        if(err) throw err;
+    });
+
+    res.redirect('/discussion/' + key);
 })
 
 
@@ -494,8 +534,9 @@ app.get('/add', (req, res) => {
 
 app.post('/add', (req, res) => {
     var inc = req.body.symbol;
+    var sec = req.body.sector;
     var val = parseInt(req.body.shares);
-    q2 = `INSERT into Stocks (stockName, unitPrice) values ('${inc}', ${val});`;
+    q2 = `INSERT into Stocks (stockName, sector, unitPrice) values ('${inc}', '${sec}', ${val});`;
 
     dbms.query(q2, (err, result, fields) => {
         if (err) throw err;

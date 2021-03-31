@@ -29,12 +29,14 @@
               <tr>
                 <th>Stock ID</th>
                 <th>Stock Name</th>
+                <th>Sector</th>
                 <th>unitPrice</th>
               </tr>
             <% for (var i = 0; i < data.length ; i++) { %>
               <tr>
                 <td><%= data[i].stockID %></td>
                 <td><%= data[i].stockName %></td>
+                <td><%= data[i].sector %></td>
                 <td><%="$ "+ data[i].unitPrice %></td>
               </tr>
             <% } %>
